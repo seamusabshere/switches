@@ -46,7 +46,8 @@ It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and tr
      "lib/tasks/switches.rake",
      "spec/spec.opts",
      "spec/spec_helper.rb",
-     "spec/switches_spec.rb"
+     "spec/switches_spec.rb",
+     "switches.gemspec"
   ]
   s.homepage = %q{http://github.com/seamusabshere/switches}
   s.rdoc_options = ["--charset=UTF-8"]
