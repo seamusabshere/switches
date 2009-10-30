@@ -5,11 +5,14 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "switches"
-    gem.summary = %Q{Turn on and off parts of your code based on yaml config files}
+    gem.summary = %Q{Turn on and off parts of your code based on yaml files.}
     gem.description = %Q{
 Switches lets you turn on and off parts of your code from the commandline. There's a defaults.yml and a current.yml in the background.
 
 For example:
+app/models/user.rb
+after_create :subscribe_email if Switches.campaign_monitor?
+
 >> Switches.campaign_monitor?
 # => false
 
@@ -21,6 +24,7 @@ $ rake switches:on[campaign_monitor]
 $ rake switches:reset # goes back to default.yml
 $ rake switches:diff  # shows diff b/w current.yml and default.yml
 $ rake s:d            # alias for switches:diff
+$ rake s:c            # alias for switches:list_current
 
 etc.
 

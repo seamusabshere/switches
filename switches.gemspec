@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{switches}
-  s.version = "0.0.0"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Seamus Abshere"]
@@ -14,6 +14,9 @@ Gem::Specification.new do |s|
 Switches lets you turn on and off parts of your code from the commandline. There's a defaults.yml and a current.yml in the background.
 
 For example:
+app/models/user.rb
+after_create :subscribe_email if Switches.campaign_monitor?
+
 >> Switches.campaign_monitor?
 # => false
 
@@ -25,6 +28,7 @@ $ rake switches:on[campaign_monitor]
 $ rake switches:reset # goes back to default.yml
 $ rake switches:diff  # shows diff b/w current.yml and default.yml
 $ rake s:d            # alias for switches:diff
+$ rake s:c            # alias for switches:list_current
 
 etc.
 
@@ -54,7 +58,7 @@ It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and tr
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{switches}
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{Turn on and off parts of your code based on yaml config files}
+  s.summary = %q{Turn on and off parts of your code based on yaml files.}
   s.test_files = [
     "spec/spec_helper.rb",
      "spec/switches_spec.rb"
