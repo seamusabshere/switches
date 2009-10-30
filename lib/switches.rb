@@ -6,7 +6,7 @@ require 'activesupport'
 
 module Switches
   CONFIG_DIR = File.join RAILS_ROOT, 'config', 'switches'
-  TASKS_DIR = File.join RAILS_ROOT, 'lib', 'tasks'
+  RAKE_PATH = File.join RAILS_ROOT, 'lib', 'tasks', 'switches.rake'
   CURRENT_PATH = File.join CONFIG_DIR, 'current.yml'
   DEFAULT_PATH = File.join CONFIG_DIR, 'default.yml'
   BACKUP_PATH  = File.join CONFIG_DIR, 'backup.yml'
@@ -29,12 +29,12 @@ module Switches
         File.open(DEFAULT_PATH, 'w') { |f| f.write({ 'quick_brown' => true, 'fox_jumps' => false }.to_yaml) }
       end
       
-      say "Copying Rake tasks into #{TASKS_DIR}."
-      FileUtils.cp File.join(File.dirname(__FILE__), 'tasks', 'switches.rake'), TASKS_DIR
+      say "Copying Rake tasks into #{RAKE_PATH}."
+      FileUtils.cp File.join(File.dirname(__FILE__), 'tasks', 'switches.rake'), RAKE_PATH
       
       say "Don't forget to:"
       say "* git add #{DEFAULT_PATH}"
-      say "* git add #{TASKS_DIR}/switches.rake"
+      say "* git add #{RAKE_PATH}"
       say "* put 'config/switches/current.yml' to your .gitignore"
       say "You can refresh the gem tasks with Switches.setup. It won't touch anything else."
     end
