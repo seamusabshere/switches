@@ -23,7 +23,7 @@ module Switches
         $stderr.puts "Switches: not putting an example default.yml into #{DEFAULT_PATH} because you already have one."
       else
         $stderr.puts "Switches: putting an example default.yml into #{DEFAULT_PATH}..."
-        File.open(DEFAULT_PATH, 'w') { |f| f.write({ :example1 => true, :example2 => false }.to_yaml) }
+        File.open(DEFAULT_PATH, 'w') { |f| f.write({ 'quick_brown' => true, 'fox_jumps' => false }.to_yaml) }
         $stderr.puts "... done."
       end
       
@@ -54,6 +54,7 @@ module Switches
       return @_default unless @_default.nil?
       $stderr.puts "Switches: file system read #{DEFAULT_PATH}"
       @_default = YAML.load(File.read(DEFAULT_PATH))
+      @_default.stringify_keys!
     rescue Errno::ENOENT
       $stderr.puts "Switches: *** You probably want to run \"Switches.setup\". #{DEFAULT_PATH} wasn't found."
       raise $!
@@ -64,6 +65,7 @@ module Switches
       if File.exist?(CURRENT_PATH)
         $stderr.puts "Switches: file system read #{CURRENT_PATH}"
         @_current = YAML.load(File.read(CURRENT_PATH))
+        @_current.stringify_keys!
       else
         @_current = default.dup
       end
@@ -135,7 +137,7 @@ module Switches
     
     def write_current
       current # load it first!
-      File.open(CURRENT_PATH, 'w') { |f| f.write current.to_yaml }
+      File.open(CURRENT_PATH, 'w') { |f| f.write current.stringify_keys.to_yaml }
     end
   end
 end
