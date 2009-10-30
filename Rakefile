@@ -5,14 +5,33 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "switches"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Turn on and off parts of your code based on yaml config files}
+    gem.description = %Q{
+Switches lets you turn on and off parts of your code from the commandline. There's a defaults.yml and a current.yml in the background.
+
+For example:
+>> Switches.campaign_monitor?
+# => false
+
+$ rake switches:on[campaign_monitor]
+
+>> Switches.campaign_monitor?
+# => true
+
+$ rake switches:reset # goes back to default.yml
+$ rake switches:diff  # shows diff b/w current.yml and default.yml
+$ rake s:d            # alias for switches:diff
+
+etc.
+
+It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and traditional compile-time assertions.
+    }
     gem.email = "seamus@abshere.net"
     gem.homepage = "http://github.com/seamusabshere/switches"
     gem.authors = ["Seamus Abshere"]
     gem.rubyforge_project = "switches"
     gem.add_development_dependency "rspec", ">= 1.2.9"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_dependency "activesupport"
   end
   Jeweler::GemcutterTasks.new
   Jeweler::RubyforgeTasks.new do |rubyforge|
