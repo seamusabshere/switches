@@ -93,16 +93,7 @@ module Switches
       end
       retval
     end
-    
-    def throw(name)
-      name = name.to_s
-      if current[name] == true
-        turn_off name
-      else
-        turn_on name
-      end
-    end
-    
+        
     def turn_off(name)
       name = name.to_s
       current[name] = false

@@ -7,9 +7,6 @@ end
 namespace :s do
   task :c => 'switches:list_current'
   task :d => 'switches:diff'
-  task :t, :name do |t, args|
-    Rake::Task['switches:throw'].execute args
-  end
   task :on, :name do |t, args|
     Rake::Task['switches:turn_on'].execute args
   end
@@ -23,16 +20,14 @@ namespace :switches do
   task :default do
     puts <<-EOS
 
-Throw a switch or add a new one with:
-  rake switches:throw[SWITCH_NAME]
+Here's a bunch of ugly instructions:
+
 List current settings:
-  rake switches:list_current
-Test a particular switch:
-  rake switches:test[SWITCH_NAME]
+  rake s:c
 Show difference between current and default settings:
-  rake switches:diff
+  rake s:d
 Clear with:
-  rake switches:remove[SWITCH_NAME]
+  rake switches:clear[FOOBAR]
 
 ... now listing current settings ...
     EOS
@@ -49,18 +44,7 @@ Clear with:
   task :list_current do
     puts Switches.current.to_yaml
   end
-  
-  desc "Test switch"
-  task :test, :name do |t, args|
-    puts Switches.send "#{args.name}?"
-  end
-  
-  desc "Throw (toggle) switch"
-  task :throw, :name do |t, args|
-    Switches.throw args.name
-    puts Switches.current.to_yaml
-  end
-  
+    
   desc "Turn on switch"
   task :turn_on, :name do |t, args|
     Switches.turn_on args.name
