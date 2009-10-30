@@ -1,17 +1,80 @@
 = switches
 
-Description goes here.
+Switches lets you turn on and off sections of your code with <tt>Switches.foobar?</tt> booleans.
 
-== Note on Patches/Pull Requests
- 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but
-   bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+== Quick start
+
+Add 2 lines to <tt>config/environment.rb</tt>:
+
+  require File.join(File.dirname(__FILE__), 'boot')
+  [...]
+  require 'switches'                                  # AFTER boot, BEFORE initializer
+  [...]
+  Rails::Initializer.run do |config|
+  [...]
+    config.gem 'switches', :lib => false              # INSIDE initializer
+
+Now run this:
+
+  my-macbook:~/my_app $ ./script/runner 'Switches.setup'
+
+Add your defaults to <tt>config/switches/defaults.yml</tt>:
+
+  --- 
+  ssl: true                   # ssl support is on by default
+  campaign_monitor: true      # campaign monitor integration is on by default
+
+== Rake tasks
+
+  rake s:c                    # show current switches
+  rake s:d                    # show difference between current and default switches
+  rake s:on[foobar]           # turn on "foobar"
+  rake s:off[foobar]          # turn off "foobar"
+
+  rake switches:clear[foobar] # clear any switch for "foobar" 
+  rake switches:reset         # go back to defaults
+  rake switches:backup        # backup current switches
+  rake switches:restore       # restore backed-up switches
+
+== Usage
+
+You can do stuff like (in <tt>app/models/user.rb</tt>):
+
+  after_create :subscribe_email if Switches.campaign_monitor?
+  def subscribe_email
+    CampaignMonitor.subscribe email
+  end
+
+Uhh ohh! Campaign Monitor's API is down and you need to shut off those failing after_creates, like, NOW.
+
+  production-server:/var/www/apps/my_app $ rake s:off[campaign_monitor]
+  production-server:/var/www/apps/my_app $ sudo monit restart all -g my_app
+
+Or let's say you're a developer who doesn't have a self-signed certificate:
+
+  my-macbook:~/my_app $ rake s:off[ssl]
+
+Those changes get persisted in <tt>config/switches/current.yml</tt>.
+
+If you want to see your switches vis-a-vis the defaults:
+
+  my-macbook:~/my_app $ rake s:d
+  --- 
+  ssl: true => false
+
+And if you want to go back to the defaults:
+
+  my-macbook:~/my_app $ rake switches:reset
+
+Remember, you should version control <tt>config/switches/defaults.yml</tt> and ignore <tt>config/switches/current.yml</tt>.
+
+== Rationale
+
+Sometimes you just need an easy way to "turn off" code.
+
+== Wishlist
+
+* capistrano task like "cap production s:off[campaign_monitor]"
 
 == Copyright
 

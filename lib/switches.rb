@@ -12,27 +12,31 @@ module Switches
   BACKUP_PATH  = File.join CONFIG_DIR, 'backup.yml'
   
   class << self
+    def say(str)
+      $stderr.puts "[SWITCHES GEM] #{str}"
+    end
+    
     def setup
       require 'fileutils'
       
-      $stderr.puts "Switches: making #{CONFIG_DIR}..."
+      say "Making #{CONFIG_DIR}."
       FileUtils.mkdir_p CONFIG_DIR
-      $stderr.puts "... done."
       
       if File.exists? DEFAULT_PATH
-        $stderr.puts "Switches: not putting an example default.yml into #{DEFAULT_PATH} because you already have one."
+        say "Not putting an example default.yml into #{DEFAULT_PATH} because you already have one."
       else
-        $stderr.puts "Switches: putting an example default.yml into #{DEFAULT_PATH}..."
+        say "Putting an example default.yml into #{DEFAULT_PATH}."
         File.open(DEFAULT_PATH, 'w') { |f| f.write({ 'quick_brown' => true, 'fox_jumps' => false }.to_yaml) }
-        $stderr.puts "... done."
       end
       
-      $stderr.puts "Switches: copying Rake tasks into #{TASKS_DIR}..."
+      say "Copying Rake tasks into #{TASKS_DIR}."
       FileUtils.cp File.join(File.dirname(__FILE__), 'tasks', 'switches.rake'), TASKS_DIR
-      $stderr.puts "... done."
       
-      $stderr.puts "Switches: *** Don't forget to version-control #{DEFAULT_PATH}, #{TASKS_DIR}/switches.rake, and eventually #{CURRENT_PATH}."
-      $stderr.puts "Switches: *** You can refresh the gem tasks with Switches.setup. It won't touch anything else."
+      say "Don't forget to:"
+      say "* git add #{DEFAULT_PATH}"
+      say "* git add #{TASKS_DIR}/switches.rake"
+      say "* put 'config/switches/current.yml' to your .gitignore"
+      say "You can refresh the gem tasks with Switches.setup. It won't touch anything else."
     end
     
     # taken from ActiveSupport::StringInquirer
@@ -52,18 +56,19 @@ module Switches
     
     def default
       return @_default unless @_default.nil?
-      $stderr.puts "Switches: file system read #{DEFAULT_PATH}"
+      # say "file system read #{DEFAULT_PATH}"
       @_default = YAML.load(File.read(DEFAULT_PATH))
       @_default.stringify_keys!
     rescue Errno::ENOENT
-      $stderr.puts "Switches: *** You probably want to run \"Switches.setup\". #{DEFAULT_PATH} wasn't found."
+      say "Couldn't read defaults from #{DEFAULT_PATH}."
+      say "You probably want to run \"./script/runner 'Switches.setup'\"."
       raise $!
     end
     
     def current
       return @_current unless @_current.nil?
       if File.exist?(CURRENT_PATH)
-        $stderr.puts "Switches: file system read #{CURRENT_PATH}"
+        # say "file system read #{CURRENT_PATH}"
         @_current = YAML.load(File.read(CURRENT_PATH))
         @_current.stringify_keys!
       else
