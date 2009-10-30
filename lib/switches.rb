@@ -1,7 +1,6 @@
+require 'yaml'
 require 'rubygems'
 require 'activesupport'
-require 'yaml'
-require 'fileutils'
 
 # TODO not agnostic, expects RAILS_ROOT
 
@@ -14,6 +13,8 @@ module Switches
   
   class << self
     def setup
+      require 'fileutils'
+      
       $stderr.puts "Switches: making #{CONFIG_DIR}..."
       FileUtils.mkdir_p CONFIG_DIR
       $stderr.puts "... done."
@@ -29,6 +30,9 @@ module Switches
       $stderr.puts "Switches: copying Rake tasks into #{TASKS_DIR}..."
       FileUtils.cp File.join(File.dirname(__FILE__), 'tasks', 'switches.rake'), TASKS_DIR
       $stderr.puts "... done."
+      
+      $stderr.puts "Switches: *** Don't forget to version-control #{DEFAULT_PATH}, #{TASKS_DIR}/switches.rake, and eventually #{CURRENT_PATH}."
+      $stderr.puts "Switches: *** You can refresh the gem tasks with Switches.setup. It won't touch anything else."
     end
     
     # taken from ActiveSupport::StringInquirer
@@ -50,6 +54,9 @@ module Switches
       return @_default unless @_default.nil?
       $stderr.puts "Switches: file system read #{DEFAULT_PATH}"
       @_default = YAML.load(File.read(DEFAULT_PATH))
+    rescue Errno::ENOENT
+      $stderr.puts "Switches: *** You probably want to run \"Switches.setup\". #{DEFAULT_PATH} wasn't found."
+      raise $!
     end
     
     def current
