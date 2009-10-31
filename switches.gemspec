@@ -47,6 +47,7 @@ It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and tr
      "Rakefile",
      "VERSION",
      "lib/switches.rb",
+     "lib/tasks/capistrano_tasks.rb",
      "lib/tasks/switches.rake",
      "spec/spec.opts",
      "spec/spec_helper.rb",

@@ -7,13 +7,16 @@ require 'activesupport'
 module Switches
   CONFIG_DIR = File.join RAILS_ROOT, 'config', 'switches'
   RAKE_PATH = File.join RAILS_ROOT, 'lib', 'tasks', 'switches.rake'
+  CAPISTRANO_PATH = File.join CONFIG_DIR, 'capistrano_tasks.rb'
+  CAPISTRANO_LOAD_PATH = CAPISTRANO_PATH.gsub "#{RAILS_ROOT}/", '' # => 'config/switches/capistrano_tasks.rb'
+  CAPFILE_PATH = File.join RAILS_ROOT, 'Capfile'
   CURRENT_PATH = File.join CONFIG_DIR, 'current.yml'
   DEFAULT_PATH = File.join CONFIG_DIR, 'default.yml'
   BACKUP_PATH  = File.join CONFIG_DIR, 'backup.yml'
   
   class << self
     def say(str)
-      $stderr.puts "[SWITCHES GEM] #{str}"
+      $stderr.puts "[SWITCHES GEM] #{str.gsub "#{RAILS_ROOT}/", ''}"
     end
     
     def setup
@@ -29,12 +32,33 @@ module Switches
         File.open(DEFAULT_PATH, 'w') { |f| f.write({ 'quick_brown' => true, 'fox_jumps' => false }.to_yaml) }
       end
       
-      say "Copying Rake tasks into #{RAKE_PATH}."
+      say "Refreshing gem-related Rake tasks at #{RAKE_PATH}."
       FileUtils.cp File.join(File.dirname(__FILE__), 'tasks', 'switches.rake'), RAKE_PATH
+      
+      say "Refreshing gem-related Capistrano tasks at #{CAPISTRANO_PATH}."
+      FileUtils.cp File.join(File.dirname(__FILE__), 'tasks', 'capistrano_tasks.rb'), CAPISTRANO_PATH
+      
+      needs_append = false
+      if not File.exists?(CAPFILE_PATH)
+        say "Creating a Capfile and including our tasks in it."
+        needs_append = true
+        FileUtils.touch CAPFILE_PATH
+      elsif old_capfile = IO.read(CAPFILE_PATH) and old_capfile.include?(CAPISTRANO_LOAD_PATH)
+        say "Found a Capfile that already includes our tasks. Great!"
+      else
+        say "I'm going to add a line to your existing Capfile. Sorry if I break anything!"
+        needs_append = true
+      end
+      
+      File.open(CAPFILE_PATH, 'a') do |f|
+        say "Appending a line that loads our Capistrano tasks to your Capfile."
+        f.write "\n# Added by switches gem #{Time.now}\nload '#{CAPISTRANO_LOAD_PATH}'\n"
+      end if needs_append
       
       say "Don't forget to:"
       say "* git add #{DEFAULT_PATH}"
       say "* git add #{RAKE_PATH}"
+      say "* git add #{CAPISTRANO_PATH}"
       say "* put 'config/switches/current.yml' to your .gitignore"
       say "You can refresh the gem tasks with Switches.setup. It won't touch anything else."
     end
