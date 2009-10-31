@@ -24,9 +24,18 @@ SWITCH_SHORTHANDS = {
   'off' => 'turn_off'
 }
 
+REQUIRED_CAPISTRANO_VARIABLES = %w{
+  deploy_to
+  rails_env
+  gfs
+}
+
 namespace :s do
   %w{ c d on off }.each do |switch_command|
     task switch_command.to_sym, :roles => lambda { roles.has_key?(:app_master) ? [ :app, :app_master ] : :app } do
+      REQUIRED_CAPISTRANO_VARIABLES.each do |cvar|
+        begin; send cvar; rescue; puts "[SWITCHES GEM] Please set :#{cvar} (probably in your cap deploy script)"; raise $!; end
+      end
       raw = Hash.new
       switch_command = SWITCH_SHORTHANDS[switch_command] if SWITCH_SHORTHANDS.has_key?(switch_command)
       run "cd #{deploy_to}/current; rake --silent switches:#{switch_command}#{"[#{ENV['ARG']}]" if ENV['ARG'].present?} RAILS_ENV=#{rails_env}; true" do |channel, stream, data|
