@@ -23,6 +23,7 @@ end
 namespace :s do
   %w{ c d on off clear reset backup restore default }.each do |cmd|
     task cmd.to_sym, :roles => lambda { roles.keys.map(&:to_s).grep(/app/).map(&:to_sym) } do
+      upload File.join(File.dirname(__FILE__), '..', '..', 'lib', 'tasks', 'switches.rake'), File.join(deploy_to, 'current', 'lib', 'tasks', 'switches.rake')
       
       # download switches xml from servers
       raw_input = Hash.new
