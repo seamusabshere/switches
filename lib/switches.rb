@@ -57,9 +57,9 @@ module Switches
       
       say "Don't forget to:"
       say "* git add #{DEFAULT_PATH}"
-      say "* git add #{RAKE_PATH}"
-      say "* git add #{CAPISTRANO_PATH}"
-      say "* put 'config/switches/current.yml' to your .gitignore"
+      say "* git ignore #{RAKE_PATH}"
+      say "* git ignore #{CAPISTRANO_PATH}"
+      say "* git ignore #{CURRENT_PATH}"
       say "You can refresh the gem tasks with Switches.setup. It won't touch anything else."
     end
     
