@@ -140,6 +140,10 @@ Remember, you should version control <tt>config/switches/defaults.yml</tt> and i
 
 Sometimes you just need an easy way to "turn off" code.
 
+## Wishlist ##
+
++ HOWTO do stuff to switches pre-rake db:migrate
+
 ## Copyright ##
 
 Copyright (c) 2009 Seamus Abshere. See LICENSE for details.
