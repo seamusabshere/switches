@@ -96,6 +96,32 @@ This is the minimum needed in the TARGET task:
 
 The switches will get applied to any role that matches <tt>/app/</tt> (so :app_master, :app, etc.)
 
+## Throwing switches before you db:migrate ##
+
+I like to use Switches to turn off <tt>%w{memoization caching facebook campaign\_monitor delayed\_job}</tt> before running rake db:migrate, so I put this in <tt>lib/tasks/databases.rake</tt>:
+
+    namespace :db do
+      # what to do before db:migrate
+      task :before_load_config do
+        Rake::Task['s:backup'].execute
+        %w{memoization caching facebook campaign_monitor delayed_job}.each do |switch|
+          Rake::Task['s:off'].execute(Rake::TaskArguments.new([:name], [switch]))
+        end
+      end
+      # what to do after db:migrate
+      task :after_load_config do
+        Rake::Task['s:restore'].execute
+        Rake::Task['cache:clear'].execute
+      end
+    end
+
+    # make it happen
+    Rake::Task['db:migrate'].enhance(['db:before_load_config']) do
+      Rake::Task['db:after_load_config'].invoke
+    end
+
+Now my question is: how can I wrap that in a begin/ensure block so the switches are always restored?
+
 ## Usage ##
 
 You can do stuff like (in <tt>app/models/user.rb</tt>):
@@ -142,7 +168,7 @@ Sometimes you just need an easy way to "turn off" code.
 
 ## Wishlist ##
 
-+ HOWTO do stuff to switches pre-rake db:migrate
++ ?
 
 ## Copyright ##
 
