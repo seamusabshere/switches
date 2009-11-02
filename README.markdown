@@ -74,6 +74,11 @@ Add your defaults to <tt>config/switches/defaults.yml</tt>:
     <td>cap TARGET s:restore</td>
     <td>restore backed-up switches (copies <tt>backup.yml</tt> to <tt>current.yml</tt>)</td>
   </tr>
+  <tr>
+    <td>rake s:default</td>
+    <td>cap TARGET s:default</td>
+    <td>list default settings</td>
+  </tr>
 </table>
 
 ## Throwing switches remotely with Capistrano ##
@@ -88,6 +93,8 @@ This is the minimum needed in the TARGET task:
       set :deploy_to, '/data/my_app'
       set :gfs, false
     end
+
+The switches will get applied to any role that matches <tt>/app/</tt> (so :app_master, :app, etc.)
 
 ## Usage ##
 
@@ -132,10 +139,6 @@ Remember, you should version control <tt>config/switches/defaults.yml</tt> and i
 ## Rationale ##
 
 Sometimes you just need an easy way to "turn off" code.
-
-## Wishlist ##
-
-* more logical cap task 
 
 ## Copyright ##
 
