@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{switches}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Seamus Abshere"]
-  s.date = %q{2009-10-30}
+  s.date = %q{2009-11-02}
   s.description = %q{
 Switches lets you turn on and off parts of your code from the commandline. There's a defaults.yml and a current.yml in the background.
 
@@ -37,13 +37,16 @@ It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and tr
   s.email = %q{seamus@abshere.net}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.rdoc"
+     "README",
+     "README.html",
+     "README.markdown"
   ]
   s.files = [
     ".document",
      ".gitignore",
      "LICENSE",
-     "README.rdoc",
+     "README",
+     "README.markdown",
      "Rakefile",
      "VERSION",
      "lib/switches.rb",
