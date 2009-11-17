@@ -1,4 +1,5 @@
 require 'yaml'
+require 'fileutils'
 require 'active_support'
 
 # TODO not agnostic, expects RAILS_ROOT
@@ -20,8 +21,6 @@ module Switches
     end
     
     def setup
-      require 'fileutils'
-      
       say "Making #{CONFIG_DIR}."
       FileUtils.mkdir_p CONFIG_DIR
       
