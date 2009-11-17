@@ -13,6 +13,7 @@ module Switches
   CURRENT_PATH = File.join CONFIG_DIR, 'current.yml'
   DEFAULT_PATH = File.join CONFIG_DIR, 'default.yml'
   BACKUP_PATH  = File.join CONFIG_DIR, 'backup.yml'
+  TRANSACTION_PID_PATH = File.join CONFIG_DIR, 'transaction.pid'
   
   class << self
     def say(str)
@@ -81,6 +82,7 @@ module Switches
     def default
       return @_default unless @_default.nil?
       # say "file system activity #{DEFAULT_PATH}"
+      resolve_transaction!
       @_default = YAML.load(IO.read(DEFAULT_PATH))
       @_default.stringify_keys!
     rescue Errno::ENOENT
@@ -91,6 +93,7 @@ module Switches
     
     def current
       return @_current unless @_current.nil?
+      resolve_transaction!
       if File.exist?(CURRENT_PATH)
         # say "file system activity #{CURRENT_PATH}"
         @_current = YAML.load(IO.read(CURRENT_PATH))
@@ -143,6 +146,7 @@ module Switches
     
     def backup
       write_current
+      start_transaction!
       # say "file system activity #{BACKUP_PATH}"
       FileUtils.cp CURRENT_PATH, BACKUP_PATH
     end
@@ -153,6 +157,7 @@ module Switches
       else
         raise ArgumentError, "#{BACKUP_PATH} doesn't exist."
       end
+      end_transaction!
       @_current = nil
     end
     
@@ -160,6 +165,28 @@ module Switches
       current # load it first!
       File.open(CURRENT_PATH, 'w') { |f| f.write current.stringify_keys.to_yaml }
     end
+    
+    def transaction_pid
       # say "file system activity #{TRANSACTION_PID_PATH}"
+      IO.readlines(TRANSACTION_PID_PATH).first.chomp.to_i if File.exists?(TRANSACTION_PID_PATH)
+    end
+    
+    def resolve_transaction!
+      if transaction_pid.present? and transaction_pid != Process.pid
+        say "Resolving... calling restore"
+        restore
+      end
+    end
+    
+    def start_transaction!
+      resolve_transaction!
+      say "Starting transaction"
+      File.open(TRANSACTION_PID_PATH, 'w') { |f| f.write Process.pid }
+    end
+    
+    def end_transaction!
+      say "Finishing transaction"
+      FileUtils.rm_f TRANSACTION_PID_PATH
+    end
   end
 end

@@ -98,29 +98,29 @@ The switches will get applied to any role that matches <tt>/app/</tt> (so :app_m
 
 ## Throwing switches before you db:migrate ##
 
-I like to use Switches to turn off <tt>%w{memoization caching facebook campaign\_monitor delayed\_job}</tt> before running rake db:migrate, so I put this in <tt>lib/tasks/databases.rake</tt>:
+I like to use Switches to turn off <tt>%w{memoization caching facebook campaign\_monitor delayed\_job}</tt> before running rake db:migrate, so I put this in <tt>lib/tasks/zzz\_rake_switches.rake</tt>:
 
-    namespace :db do
-      # what to do before db:migrate
-      task :before_load_config do
+    namespace :rake_switches do
+      task :turn_stuff_off do
         Rake::Task['s:backup'].execute
         %w{memoization caching facebook campaign_monitor delayed_job}.each do |switch|
           Rake::Task['s:off'].execute(Rake::TaskArguments.new([:name], [switch]))
         end
       end
-      # what to do after db:migrate
-      task :after_load_config do
+      task :turn_stuff_back_on do
         Rake::Task['s:restore'].execute
         Rake::Task['cache:clear'].execute
       end
     end
 
-    # make it happen
-    Rake::Task['db:migrate'].enhance(['db:before_load_config']) do
-      Rake::Task['db:after_load_config'].invoke
+    # modify what happens on db:migrate, etc.
+    [ 'db:migrate', 'your:task:if:it:needs:wrapping' ].each do |task_to_wrap|
+      Rake::Task[task_to_wrap].enhance(['rake_switches:turn_stuff_off']) do
+        Rake::Task['rake_switches:turn_stuff_back_on'].invoke
+      end
     end
 
-Now my question is: how can I wrap that in a begin/ensure block so the switches are always restored?
+Note that 's:backup' and 's:restore' are not thread safe or really GFS safe, either.
 
 ## Usage ##
 
