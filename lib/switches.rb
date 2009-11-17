@@ -67,8 +67,12 @@ module Switches
       suffix = method_name.to_s[-1,1]
       key = method_name.to_s[0..-2]
       
-      if suffix == "?" and current.has_key?(key)
-        current[key]
+      if suffix == "?"
+        if current.has_key?(key)
+          current[key]      # set, so could be true or false
+        else
+          false             # unset, so always false
+        end
       elsif suffix == "="
         current[key] = args.first
         # TEMPORARY since we're not doing a write_current here
