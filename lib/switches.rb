@@ -80,7 +80,7 @@ module Switches
     
     def default
       return @_default unless @_default.nil?
-      # say "file system read #{DEFAULT_PATH}"
+      # say "file system activity #{DEFAULT_PATH}"
       @_default = YAML.load(IO.read(DEFAULT_PATH))
       @_default.stringify_keys!
     rescue Errno::ENOENT
@@ -92,7 +92,7 @@ module Switches
     def current
       return @_current unless @_current.nil?
       if File.exist?(CURRENT_PATH)
-        # say "file system read #{CURRENT_PATH}"
+        # say "file system activity #{CURRENT_PATH}"
         @_current = YAML.load(IO.read(CURRENT_PATH))
         @_current.stringify_keys!
       else
@@ -143,6 +143,7 @@ module Switches
     
     def backup
       write_current
+      # say "file system activity #{BACKUP_PATH}"
       FileUtils.cp CURRENT_PATH, BACKUP_PATH
     end
     
@@ -159,5 +160,6 @@ module Switches
       current # load it first!
       File.open(CURRENT_PATH, 'w') { |f| f.write current.stringify_keys.to_yaml }
     end
+      # say "file system activity #{TRANSACTION_PID_PATH}"
   end
 end
