@@ -1,6 +1,5 @@
 require 'yaml'
-require 'rubygems'
-require 'activesupport'
+require 'active_support'
 
 # TODO not agnostic, expects RAILS_ROOT
 
