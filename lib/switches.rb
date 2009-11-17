@@ -81,7 +81,6 @@ module Switches
     def default
       return @_default unless @_default.nil?
       # say "file system read #{DEFAULT_PATH}"
-      @_default = YAML.load(File.read(DEFAULT_PATH))
       @_default = YAML.load(IO.read(DEFAULT_PATH))
       @_default.stringify_keys!
     rescue Errno::ENOENT
@@ -94,7 +93,6 @@ module Switches
       return @_current unless @_current.nil?
       if File.exist?(CURRENT_PATH)
         # say "file system read #{CURRENT_PATH}"
-        @_current = YAML.load(File.read(CURRENT_PATH))
         @_current = YAML.load(IO.read(CURRENT_PATH))
         @_current.stringify_keys!
       else
