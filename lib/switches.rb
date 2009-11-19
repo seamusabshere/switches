@@ -1,4 +1,5 @@
 require 'yaml'
+require 'pp'
 require 'fileutils'
 require 'active_support'
 
@@ -16,6 +17,14 @@ module Switches
   TRANSACTION_PID_PATH = File.join CONFIG_DIR, 'transaction.pid'
   
   class << self
+    def dump(method)
+      if ENV['SWITCHES_XML'] == 'true'
+        puts send(method).to_xml
+      else
+        pp send(method)
+      end
+    end
+    
     def say(str)
       $stderr.puts "[SWITCHES GEM] #{str.gsub "#{RAILS_ROOT}/", ''}"
     end

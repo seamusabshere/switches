@@ -27,7 +27,7 @@ namespace :s do
       
       # download switches xml from servers
       raw_input = Hash.new
-      run "cd #{deploy_to}/current; rake --silent s:#{cmd}#{"[#{ENV['ARG']}]" if ENV['ARG'].present?} RAILS_ENV=#{rails_env}; true" do |channel, stream, data|
+      run "cd #{deploy_to}/current; rake --silent s:#{cmd}#{"[#{ENV['ARG']}]" if ENV['ARG'].present?} SWITCHES_XML=true RAILS_ENV=#{rails_env}; true" do |channel, stream, data|
         server = channel[:server]
         server_identifier = gfs ? server.host : "#{server.host}:#{server.port}".chomp(':')
         raw_input[server_identifier] ||= Array.new
