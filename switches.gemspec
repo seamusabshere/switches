@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{switches}
-  s.version = "0.1.4"
+  s.version = "0.1.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Seamus Abshere"]
-  s.date = %q{2009-11-17}
+  s.date = %q{2009-11-19}
   s.description = %q{
 Switches lets you turn on and off parts of your code from the commandline. There's a defaults.yml and a current.yml in the background.
 
