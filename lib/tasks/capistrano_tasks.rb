@@ -1,7 +1,7 @@
 # assumes you've got roles, deploy_to, rails_env
 
 require 'pp'
-require 'activesupport'
+require 'active_support'
 require 'zlib'
 
 # basically { :a => 1, :b => 2 }.eql?({ :b => 2, :a => 1}) => true
