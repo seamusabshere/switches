@@ -1,0 +1,133 @@
+= switches
+
+Switches lets you turn on and off sections of your code with <tt>Switches.foobar?</tt> booleans.
+
+It's an extraction from [http://brighterplanet.com](http://brighterplanet.com), where we use it as an emergency button to turn on/off API integration with Facebook, Campaign Monitor, etc.
+
+== Quick start
+
+Add 2 lines to <tt>config/environment.rb</tt>:
+
+  require File.join(File.dirname(__FILE__), 'boot')
+  [...]
+  require 'switches'                                  # AFTER boot, BEFORE initializer
+  [...]
+  Rails::Initializer.run do |config|
+  [...]
+    config.gem 'switches', :lib => false              # INSIDE initializer
+
+Now run this:
+
+  my-macbook:~/my_app $ ./script/runner 'Switches.setup'
+
+Add your defaults to <tt>config/switches/defaults.yml</tt>:
+
+  --- 
+  ssl: true                   # ssl support is on by default
+  campaign_monitor: true      # campaign monitor integration is on by default
+
+== Tasks
+
+  RAKE TASK                 CAP TASK                         NOTES
+  rake s:c                  cap TARGET s:c                   show current switches
+  rake s:d                  cap TARGET s:d                   show difference between current and default switches
+  rake s:on[SWITCH]         cap TARGET s:on ARG=SWITCH       turn on SWITCH
+  rake s:off[SWITCH]        cap TARGET s:off ARG=SWITCH      turn off SWITCH
+  rake s:clear[SWITCH]      cap TARGET s:clear ARG=SWITCH    clear any switch for SWITCH
+  rake s:reset              cap TARGET s:reset               go back to defaults (deletes config/switches/current.yml)
+  rake s:backup             cap TARGET s:backup              backup current switches (copies to config/switches/backup.yml)
+  rake s:restore            cap TARGET s:restore             restore backed-up switches (copies backup.yml to current.yml)
+  rake s:default            cap TARGET s:default             list default settings
+
+== Throwing switches remotely with Capistrano
+
+This is the minimum needed in the TARGET task:
+
+  task :production do
+    role :app, 'ec2-88-77-66-55.compute-1.amazonaws.com'
+    role :app, '177.133.33.144'
+
+    set :rails_env, 'production'
+    set :deploy_to, '/data/my_app'
+    set :gfs, false
+  end
+
+The switches will get applied to any role that matches <tt>/app/</tt> (so :app_master, :app, etc.)
+
+== Throwing switches before you db:migrate
+
+I like to use Switches to turn off <tt>%w{memoization caching facebook campaign\_monitor delayed\_job}</tt> before running rake db:migrate, so I put this in <tt>lib/tasks/zzz\_rake_switches.rake</tt>:
+
+  namespace :rake_switches do
+    task :turn_stuff_off do
+      Rake::Task['s:backup'].execute
+      %w{memoization caching facebook campaign_monitor delayed_job}.each do |switch|
+        Rake::Task['s:off'].execute(Rake::TaskArguments.new([:name], [switch]))
+      end
+    end
+    task :turn_stuff_back_on do
+      Rake::Task['s:restore'].execute
+      Rake::Task['cache:clear'].execute
+    end
+  end
+
+  # modify what happens on db:migrate, etc.
+  [ 'db:migrate', 'your:task:if:it:needs:wrapping' ].each do |task_to_wrap|
+    Rake::Task[task_to_wrap].enhance(['rake_switches:turn_stuff_off']) do
+      Rake::Task['rake_switches:turn_stuff_back_on'].invoke
+    end
+  end
+
+Note that 's:backup' and 's:restore' are not thread safe or really GFS safe, either.
+
+== Usage
+
+You can do stuff like (in <tt>app/models/user.rb</tt>):
+
+  after_create :subscribe_email if Switches.campaign_monitor?
+  def subscribe_email
+    CampaignMonitor.subscribe email
+  end
+
+Uhh ohh! Campaign Monitor's API is down and you need to shut off those failing after_creates, like, NOW.
+
+  production-server-1:/var/www/apps/my_app $ rake s:off[campaign_monitor]
+  production-server-1:/var/www/apps/my_app $ sudo monit restart all -g my_app
+  [...]
+  production-server-2:/var/www/apps/my_app $ rake s:off[campaign_monitor]
+  production-server-2:/var/www/apps/my_app $ sudo monit restart all -g my_app
+
+Or, even better, do it with cap:
+
+  my-macbook:~/my_app $ cap production s:off ARG=campaign_monitor
+  my-macbook:~/my_app $ cap production mongrel:restart
+
+For another example, let's say you're a developer who doesn't have a self-signed certificate:
+
+  my-macbook:~/my_app $ rake s:off[ssl]
+
+Those changes get persisted in <tt>config/switches/current.yml</tt>.
+
+If you want to see your switches vis-a-vis the defaults:
+
+  my-macbook:~/my_app $ rake s:d
+  --- 
+  ssl: true => false
+
+And if you want to go back to the defaults:
+
+  my-macbook:~/my_app $ rake s:reset
+
+Remember, you should version control <tt>config/switches/defaults.yml</tt> and ignore <tt>config/switches/current.yml</tt>.
+
+== Rationale
+
+Sometimes you just need an easy way to "turn off" code.
+
+== Wishlist
+
++ ?
+
+== Copyright
+
+Copyright (c) 2009 Seamus Abshere. See LICENSE for details.

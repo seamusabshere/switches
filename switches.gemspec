@@ -37,16 +37,13 @@ It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and tr
   s.email = %q{seamus@abshere.net}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README",
-     "README.html",
-     "README.markdown"
+     "README.rdoc"
   ]
   s.files = [
     ".document",
      ".gitignore",
      "LICENSE",
-     "README",
-     "README.markdown",
+     "README.rdoc",
      "Rakefile",
      "VERSION",
      "lib/switches.rb",
