@@ -2,7 +2,7 @@
 
 Switches lets you turn on and off sections of your code with <tt>Switches.foobar?</tt> booleans.
 
-It's an extraction from [http://brighterplanet.com](http://brighterplanet.com), where we use it as an emergency button to turn on/off API integration with Facebook, Campaign Monitor, etc.
+It's an extraction from http://brighterplanet.com, where we use it as an emergency button to turn on/off API integration with Facebook, Campaign Monitor, etc.
 
 == Quick start
 
