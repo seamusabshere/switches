@@ -35,7 +35,7 @@ It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and tr
     gem.authors = ["Seamus Abshere"]
     gem.rubyforge_project = "switches"
     gem.add_development_dependency "rspec", ">= 1.2.9"
-    gem.add_dependency "activesupport"
+    gem.add_dependency 'activesupport', '>=2.3.4'
   end
   Jeweler::GemcutterTasks.new
   Jeweler::RubyforgeTasks.new do |rubyforge|
