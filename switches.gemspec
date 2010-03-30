@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{switches}
-  s.version = "0.1.6"
+  s.version = "0.1.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Seamus Abshere"]
-  s.date = %q{2009-11-19}
+  s.date = %q{2010-03-30}
   s.description = %q{
 Switches lets you turn on and off parts of your code from the commandline. There's a defaults.yml and a current.yml in the background.
 
@@ -58,7 +58,7 @@ It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and tr
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{switches}
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{Turn on and off parts of your code based on yaml files.}
   s.test_files = [
     "spec/spec_helper.rb",
@@ -71,14 +71,14 @@ It's inspired by ActiveSupport's StringInquirer (e.g. Rails.development?) and tr
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
-      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 2.3.4"])
     else
       s.add_dependency(%q<rspec>, [">= 1.2.9"])
-      s.add_dependency(%q<activesupport>, [">= 0"])
+      s.add_dependency(%q<activesupport>, [">= 2.3.4"])
     end
   else
     s.add_dependency(%q<rspec>, [">= 1.2.9"])
-    s.add_dependency(%q<activesupport>, [">= 0"])
+    s.add_dependency(%q<activesupport>, [">= 2.3.4"])
   end
 end
 
